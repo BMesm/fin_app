@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-df = pd.read_csv("./test.csv")
+df = pd.read_csv("./data/test.csv")
 df = df.loc[~df['Catégorie'].isna() & df['Montant']>0]
 df['Montant'] = df['Montant'].str.replace(',','.').astype(float).abs()
     # df_details = df.loc[df['Catégorie'].isna() & ~df["Détails du mouvement"].isna(),'Date comptable':"Sous-catégorie"]
