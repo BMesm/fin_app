@@ -68,20 +68,19 @@ def apply_search_words(search_word_data):
     return df_searched
 
 def format_func(option):
-    return CHOICES[option]
+    return range_date[option]
 
 cat_data = pd.read_csv("./data/cat.csv")
 search_word_data = pd.read_json("./data/search_words.json",orient='index')
 df = apply_search_words(search_word_data)
 
-today = datetime.datetime.now()
 min_date = df['Date comptable'].min()
 max_date = df['Date comptable'].max()
 col1,col2 = st.columns(2)
 with col2:
-    CHOICES = {(max_date - datetime.timedelta(days=30), max_date): "Denier 30 jours",
+    range_date = {(max_date - datetime.timedelta(days=30), max_date): "Dernier 30 jours",
                 (min_date , max_date): "Toute les dates"}
-    select_range_date = st.selectbox("Select option", options=list(CHOICES.keys()), format_func=format_func,label_visibility="collapsed",index=1)
+    select_range_date = st.selectbox("Select option", options=list(range_date.keys()), format_func=format_func,label_visibility="collapsed",index=1)
 with col1:
     d = st.date_input(
         "",
@@ -111,7 +110,6 @@ with st.expander("Ajouter une catégorie"):
 
 with st.container():
     column_selected = st.radio("Sélection de colonne",["Libellés","Détails du mouvement"],label_visibility="visible")
-    st.write(column_selected)
     search_word = st.text_input("Terme à chercher")
     col1, col2 = st.columns(2)
     with col1:
