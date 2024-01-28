@@ -46,7 +46,7 @@ def record_index(selected_rows,column_selected):
 def submit_cat(df,selection,cat,sub_cat,search_word_data):
     df.loc[df.index.isin(selection.index.to_list()),"Catégorie"] = cat
     df.loc[df.index.isin(selection.index.to_list()),"Sous-catégorie"] = sub_cat
-    df.to_csv('./data/testing.csv',index=False)
+    df.to_csv('./saved_data/testing.csv',index=False)
 
 def apply_search_words(search_word_data):
     df = pd.read_csv("./data/ingb.csv")
