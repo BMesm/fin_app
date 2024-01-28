@@ -2,4 +2,6 @@
 /jupnoteb
 /saveddata
 /file
+/saved_data
 .DS_Store
+*.csv
