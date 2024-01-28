@@ -11,10 +11,14 @@ def format_amount(option):
     return range_amount[option]
 
 def load_format_data():
-  df = pd.read_csv("./data/testing.csv")
+  dfb = pd.read_csv("./saved_data/testbel.csv")
+  dfi = pd.read_csv("./saved_data/testing.csv")
+  dfbel = dfb.loc[:,['Date de comptabilisation','Montant','Catégorie','Sous-catégorie']].rename(columns={'Date de comptabilisation':'Date comptable'})
+  dfbel['Compte'] = 'Belfius'
+  dfing = dfi.loc[:,['Date comptable','Montant','Catégorie','Sous-catégorie']]
+  dfing['Compte'] = 'Ing'
+  df = pd.concat([dfbel,dfing],ignore_index=True)
   df = df.loc[~df['Catégorie'].isna()]
-  # df['Montant'] = df['Montant'].str.replace(',','.').astype(float)
-  df["Date valeur"] = pd.to_datetime(df["Date valeur"])
   df["Date comptable"] = pd.to_datetime(df["Date comptable"])
   return df
 
@@ -45,7 +49,7 @@ with col2:
   range_amount = {0:'Dépenses',1:'Rentrées'}
   select_amount_type = st.selectbox("Selection type de montant", options=list(range_amount.keys()), format_func=format_amount)
 
-df = df[(df["Date valeur"].dt.date> d[0]) & (df["Date valeur"].dt.date < d[1])]
+df = df[(df["Date comptable"].dt.date> d[0]) & (df["Date comptable"].dt.date < d[1])]
 df = df.loc[df['Catégorie'].isin(select_cat)]
 df = df.loc[amount_type[select_amount_type]]
 df['Montant'] = df['Montant'].abs()
