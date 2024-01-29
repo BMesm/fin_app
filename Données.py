@@ -40,7 +40,7 @@ def record_index(selected_rows,column_selected):
         index = search_word_data.loc[mask_search].index[0]
         search_word_data.at[index,'indexes'] = selected_rows
     else:
-        search_word_data.loc[len(search_word_data.index),['cat','sub_cat','word','search_col','search_colB','indexes']] = [cat, sub_cat, search_word,column_selected,'Nom contrepartie contient', selected_rows]
+        search_word_data.loc[max(search_word_data.index)+1,['cat','sub_cat','word','search_col','search_colB','indexes']] = [cat, sub_cat, search_word,column_selected,'Nom contrepartie contient', selected_rows]
     search_word_data.to_json('./data/search_words.json',orient="index",indent=4)
 
 def submit_cat(df,selection,cat,sub_cat,search_word_data):
@@ -57,7 +57,7 @@ def apply_search_words(search_word_data):
 
     df_searched = df.copy()
 
-    for i, row in search_word_data.iterrows():
+    for i, row in search_word_data.loc[~search_word_data.search_col.isna()].iterrows():
         if row['indexes']:
             mask = (df[row['search_col']].str.contains(row['word'],na=False,case=False,regex=True) & ~df["Unnamed: 0"].isin(row["indexes"]))
         else:
@@ -75,18 +75,18 @@ cat_data = pd.read_csv("./data/cat.csv")
 search_word_data = pd.read_json("./data/search_words.json",orient='index')
 df = apply_search_words(search_word_data)
 
-min_date = df['Date comptable'].min()
+min_dates = df['Date comptable'].min()
 max_dates = df['Date comptable'].max()
 col1,col2 = st.columns(2)
 with col2:
     range_date = {(max_dates - datetime.timedelta(days=30), max_dates): "Dernier 30 jours",
-                (min_date , max_dates): "Toute les dates"}
+                (min_dates , max_dates): "Toute les dates"}
     select_range_dates = st.selectbox("Select option", options=list(range_date.keys()), format_func=format_funcr,label_visibility="collapsed",index=1)
 with col1:
     date_selected = st.date_input(
         "Selected",
         select_range_dates,
-        min_date,
+        min_dates,
         max_dates,
         format="MM.DD.YYYY",
         label_visibility="collapsed",
@@ -97,13 +97,13 @@ with st.expander("Données non classifiés : Libellés"):
     df_label = df.loc[df['Catégorie'].isna() & df["Détails du mouvement"].isna(),'Date comptable':"Sous-catégorie"]
     df_label[(df_label["Date valeur"].dt.date> date_selected[0]) & (df_label["Date valeur"].dt.date < date_selected[1])]
     #Debug line
-    st.write(len(df_label))
+    st.write(len(df_label[(df_label["Date valeur"].dt.date> date_selected[0]) & (df_label["Date valeur"].dt.date < date_selected[1])]))
 
 with st.expander("Données non classifiés : Détails du mouvement"):
     df_details = df.loc[df['Catégorie'].isna() & ~df["Détails du mouvement"].isna(),'Date comptable':"Sous-catégorie"]
     df_details[(df_details["Date valeur"].dt.date> date_selected[0]) & (df_details["Date valeur"].dt.date < date_selected[1])]
     #Debug line
-    st.write(len(df_details))
+    st.write(len(df_details[(df_details["Date valeur"].dt.date> date_selected[0]) & (df_details["Date valeur"].dt.date < date_selected[1])]))
 
 with st.expander("Ajouter une catégorie"):
     with st.form("add_cat"):
