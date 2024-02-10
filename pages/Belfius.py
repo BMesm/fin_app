@@ -42,8 +42,8 @@ def submit_cat(df,selection,cat,sub_cat,search_word_data):
 
 def apply_search_words(search_word_data):
     df = pd.read_csv("./data/belfius.csv",skiprows=12,sep=';',encoding='latin-1')
-    df["Date valeur"] = pd.to_datetime(df["Date valeur"])
-    df["Date de comptabilisation"] = pd.to_datetime(df["Date de comptabilisation"])
+    df["Date valeur"] = pd.to_datetime(df["Date valeur"],format='%d/%m/%Y')
+    df["Date de comptabilisation"] = pd.to_datetime(df["Date de comptabilisation"],format='%d/%m/%Y')
     if ~{'Catégorie','Sous-catégorie'}.issubset(df.columns):
         df = add_columns(df)
 
@@ -80,7 +80,6 @@ with col1:
         select_range_date,
         min_date,
         max_date,
-        format="MM.DD.YYYY",
         label_visibility="collapsed"
     )
 

@@ -88,7 +88,6 @@ with col1:
         select_range_dates,
         min_dates,
         max_dates,
-        format="MM.DD.YYYY",
         label_visibility="collapsed",
         key="dez"
     )

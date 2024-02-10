@@ -37,7 +37,6 @@ with col1:
       select_range_date,
       min_date,
       max_date,
-      format="MM.DD.YYYY",
       label_visibility="visible"
   )
 
