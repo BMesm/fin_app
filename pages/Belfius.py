@@ -99,9 +99,12 @@ with st.container():
     search_word = st.text_input("Terme à chercher")
     col1, col2 = st.columns(2)
     with col1:
-        cat = st.selectbox("Catégorie",cat_data["cat"].unique(),)
+        sub_cat = st.selectbox("Sous-catégorie",cat_data["sub_cat"].unique(),index=None,placeholder="Sélectionne la sous-catégorie...",)
     with col2:
-        sub_cat = st.selectbox("Sous-catégorie",cat_data["sub_cat"].unique())
+        if sub_cat==None:
+            cat = st.selectbox("Catégorie",cat_data["cat"].unique(),index=None,placeholder="Select cat...",)
+        else:
+            cat = st.selectbox("Catégorie",cat_data.loc[cat_data['sub_cat']==sub_cat,'cat'].unique(),placeholder="Select caté...",)
     df_filtred = df[df[column_selected].str.contains(search_word,na=False,case=False,regex=True)]
     edited_df = dataframe_with_selections(df_filtred)
 
